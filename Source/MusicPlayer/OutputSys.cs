@@ -27,7 +27,7 @@ namespace MusicPlayer
 				{
 					output.lastOutput = hashCode;
 
-					using (var fs = File.Open(Main.path + Main.settings.outputPath + output.path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+					using (var fs = File.Open(Util.ParsePath(Main.settings.outputPath + output.path), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
 					{
 						var bytes = Encoding.UTF8.GetBytes(text);
 						fs.Write(bytes, 0, bytes.Length);
@@ -48,7 +48,9 @@ namespace MusicPlayer
 			{
 				var key = "{" + peram.Key + "}";
 				if (text.Contains(key))
+				{
 					text = text.Replace(key, peram.Value.Invoke());
+				}
 			}
 		}
 	}

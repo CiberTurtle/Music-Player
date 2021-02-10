@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace MusicPlayer
 {
@@ -69,7 +70,7 @@ namespace MusicPlayer
 			}
 		}
 
-		public static string path;
+		public static string root;
 		public static string settingsPath = @"\settings.json";
 
 		public static Point kirbySize = new Point(64 * 4);
@@ -95,6 +96,8 @@ namespace MusicPlayer
 		public static long lastTickTime;
 		public static TimeSpan timePlayed;
 
+		public static List<string> errors = new List<string>();
+
 		public Main()
 		{
 			graphics = new GraphicsDeviceManager(this);
@@ -105,12 +108,12 @@ namespace MusicPlayer
 			graphics.SynchronizeWithVerticalRetrace = true;
 			graphics.ApplyChanges();
 
-			path = Environment.CurrentDirectory;
-			settingsPath = path + settingsPath;
+			root = Environment.CurrentDirectory;
+			settingsPath = root + settingsPath;
 
 			JsonConvert.DefaultSettings = () => new JsonSerializerSettings() { Formatting = Formatting.Indented };
 
-			File.WriteAllText(path + "/schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
+			File.WriteAllText(root + "/schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
 
 			InactiveSleepTime = new TimeSpan(666666 * 2);
 
@@ -121,6 +124,7 @@ namespace MusicPlayer
 
 		protected override void Initialize()
 		{
+			CreateFilesAndFolders();
 			OutputSys.UpdateAllOutputs(true);
 
 			base.Initialize();
@@ -158,6 +162,7 @@ namespace MusicPlayer
 				if (Input.CheckButtonPress(settings.reloadKey))
 				{
 					NullAllData();
+					CreateFilesAndFolders();
 					MusicSys.PlayRandomSong();
 				}
 
@@ -193,7 +198,7 @@ namespace MusicPlayer
 		protected override void Draw(GameTime gameTime)
 		{
 			// Alpha zero so you can setup a game capture in obs
-			GraphicsDevice.Clear(new Color(17, 17, 17, 0));
+			GraphicsDevice.Clear(Color.black);
 
 			using (var layout = new StackLayout(new Vector2(8), 32, false))
 			{
@@ -204,15 +209,22 @@ namespace MusicPlayer
 						graphics.PreferredBackBufferHeight / 2 + (int)kirbySize.Y,
 						kirbySize.X,
 						kirbySize.Y),
-					Color.White);
+					Color.white);
 
 				foreach (var line in settings.windowTexts)
 				{
 					if (line.StartsWith('#'))
-						sb.DrawString(bold, OutputSys.ParsePerams(line.Remove(0, 1)), layout.AddElement(), Color.White);
+						sb.DrawString(bold, OutputSys.ParsePerams(line.Remove(0, 1)), layout.AddElement(), Color.white);
 					else
-						sb.DrawString(font, OutputSys.ParsePerams(line), layout.AddElement(), Color.White);
+						sb.DrawString(font, OutputSys.ParsePerams(line), layout.AddElement(), Color.white);
 				}
+
+				layout.AddElement();
+
+				if (errors.Count > 0)
+					sb.DrawString(font, $"Error ({errors.Count}): {errors[errors.Count - 1]}", layout.AddElement(), Color.red);
+				else
+					sb.DrawString(font, "No errors", layout.AddElement(), Color.white);
 			}
 
 			base.Draw(gameTime);
@@ -231,7 +243,24 @@ namespace MusicPlayer
 		public static void WriteSettings()
 		{
 			// Kinda hacky but idk
-			File.WriteAllText(settingsPath, "{\n\t\"$schema\": \"./schema.json\"," + JsonConvert.SerializeObject(_settings).Remove(0, 1));
+			File.WriteAllText(
+				settingsPath,
+				"{\n\t\"$schema\": \"./settings_schema.json\"," + JsonConvert.SerializeObject(_settings).Remove(0, 1)
+			);
+		}
+
+		public static void CreateFilesAndFolders()
+		{
+			if (!Directory.Exists(Util.ParsePath(settings.musicPath)))
+				Directory.CreateDirectory(Util.ParsePath(settings.musicPath));
+
+			if (!Directory.Exists(Util.ParsePath(settings.outputPath)))
+				Directory.CreateDirectory(Util.ParsePath(settings.outputPath));
+		}
+
+		public static void LogError(string error)
+		{
+			errors.Add(error);
 		}
 	}
 }

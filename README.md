@@ -9,7 +9,7 @@
 3. Hit `F5` to play a random song
 4. Add a text source to obs
 5. Set the text source to read from a text file from the `Output` folder
-6. Profit!!!
+6. **Profit!!!**
 
 ### Folder Layout
 
@@ -29,14 +29,14 @@
 	- song_time.txt
 
 	- settings.json (see #Settings)
-	- schema.json (Ignore this)
+	- settings_schema.json (Ignore this)
 ```
 
 ### Settings
 
-```json
+```jsonc
 {
-	"$schema": "./schema.json", // Ignore this
+	"$schema": "./settings_schema.json", // Ignore this
 	"startingVolume": 10, // The starting volume in increments
 	"volumeIncrements": 10, // The max volume
 	"tickTime": 1.0, // Time between ticks
@@ -80,7 +80,7 @@
 
 ### Parameters
 
-Format: `{parameter_name}`
+Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 
 | Parameter Name             | Description                                                |
 | -------------------------- | ---------------------------------------------------------- |

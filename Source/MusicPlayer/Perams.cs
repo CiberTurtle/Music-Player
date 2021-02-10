@@ -42,37 +42,26 @@ namespace MusicPlayer
 						{ "song_duration_mm:ss", () => MusicSys.currentSong == null ? "--:--" : MusicSys.currentSong.Duration.ToString(@"mm\:ss") },
 						{ "song_duration_mm:ss.ff", () => MusicSys.currentSong == null ? "--:--.--" : MusicSys.currentSong.Duration.ToString(@"mm\:ss\.ff") },
 
-						{ "song_timeplayed_mm:ss", () => MusicSys.currentSong == null ? "--:--" : Main.timePlayed.ToString(@"mm\:ss") },
-						{ "song_timeplayed_mm:ss.ff", () => MusicSys.currentSong == null ? "--:--.--" : Main.timePlayed.ToString(@"mm\:ss\.ff") },
+						{ "song_time_mm:ss", () => MusicSys.currentSong == null ? "--:--" : Main.timePlayed.ToString(@"mm\:ss") },
+						{ "song_time_mm:ss.ff", () => MusicSys.currentSong == null ? "--:--.--" : Main.timePlayed.ToString(@"mm\:ss\.ff") },
 
-						{
-				"song_timebar_10", () =>
-			{
-				if (MusicSys.currentSong == null)
-					return "[          ]";
-				else
-				{
-					int segmentsToMake = (int)Math.Round((Main.timePlayed.TotalSeconds / MusicSys.currentSong.Duration.TotalSeconds) * 10.0 - 0.5);
-
-					var sb = new StringBuilder("[");
-
-					for (int i = 0; i < 10; i++)
-					{
-						if (i <= segmentsToMake)
-							sb.Append('-');
-						else
-							sb.Append(' ');
-					}
-
-					sb.Append(']');
-
-					return sb.ToString();
-				}
-			} },
+						{ "song_time_bar_10", () =>
+						Util.MakeBar(
+							MusicSys.currentSong == null ?
+							0 :
+							(int)Math.Round(((float)Main.timePlayed.TotalSeconds / (float)MusicSys.currentSong.Duration.TotalSeconds) * 10.0f),
+							10) },
 
 						{ "audio_volume", () => Main.volume.ToString() },
 						{ "audio_volume_max", () => Main.settings.volumeIncrements.ToString() },
 						{ "audio_volume_percent", () => Math.Round(SoundEffect.MasterVolume * 100).ToString() },
+						{ "audio_volume_bar_10", () =>
+						Util.MakeBar(
+							MusicSys.currentSong == null ?
+							0 :
+							(int)Math.Round(((float)Main.timePlayed.TotalSeconds / (float)MusicSys.currentSong.Duration.TotalSeconds) * 10.0f),
+							10)
+							},
 
 						{ "output_enabled", () => Main.enableOutput ? "ON" : "OFF" },
 

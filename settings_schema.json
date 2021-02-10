@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Output": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "path": {
+          "description": "Path relitive to 'outputPath' where the text gets generated (also incudes the file name and extention).",
+          "type": "string"
+        },
+        "text": {
+          "description": "Text that gets outputed in the file (will get parsed).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "text"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "startingVolume": {
+      "description": "Defualt volume in increments. [0 - volumeIncrements]",
+      "type": "integer",
+      "minimum": 0.0,
+      "maximum": 2147483647.0
+    },
+    "volumeIncrements": {
+      "description": "Volume in increments or \"max volume\". [0 - 2147483647]",
+      "type": "integer",
+      "minimum": 0.0,
+      "maximum": 2147483647.0
+    },
+    "tickTime": {
+      "description": "Time between Ticks. Set to -1 to tick every frame.",
+      "type": "number"
+    },
+    "settingsKey": {},
+    "toggleOutputKey": {},
+    "reloadKey": {},
+    "volumeUpKey": {},
+    "volumeDownKey": {},
+    "pauseKey": {},
+    "musicPath": {
+      "description": "Relitive path to a folder containing playlists that contains music.",
+      "type": "string"
+    },
+    "outputPath": {
+      "description": "Relitive path to a folder where all outputs are relitive to.",
+      "type": "string"
+    },
+    "windowTexts": {
+      "description": "Text that appears in the window (will get parsed) (start with '#' to make the line bold).",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "outputsNewSong": {
+      "description": "Outputs tiggered after a new song is being played.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions/Output"
+      }
+    },
+    "outputsEveryTick": {
+      "description": "Outputs triggered when a tick happens.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions/Output"
+      }
+    }
+  },
+  "required": [
+    "startingVolume",
+    "volumeIncrements",
+    "tickTime",
+    "settingsKey",
+    "toggleOutputKey",
+    "reloadKey",
+    "volumeUpKey",
+    "volumeDownKey",
+    "pauseKey",
+    "musicPath",
+    "outputPath",
+    "windowTexts",
+    "outputsNewSong",
+    "outputsEveryTick"
+  ]
+}
