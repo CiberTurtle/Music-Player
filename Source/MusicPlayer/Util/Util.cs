@@ -19,7 +19,7 @@ namespace MusicPlayer
 
 		public static string MakeBar(int value, int max)
 		{
-			var sb = new StringBuilder('[');
+			var sb = new StringBuilder("[");
 
 			for (int i = 0; i < max; i++)
 				if (i < (float)value - 0.25f)
