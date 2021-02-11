@@ -32,10 +32,10 @@ namespace MusicPlayer
 				switch (_isHorizontal)
 				{
 					case true:
-						_offset.X += elementSize;
+						_offset.x += elementSize;
 						break;
 					case false:
-						_offset.Y += elementSize;
+						_offset.y += elementSize;
 						break;
 				}
 			}

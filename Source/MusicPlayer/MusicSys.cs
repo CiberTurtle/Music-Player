@@ -59,8 +59,15 @@ namespace MusicPlayer
 			// Load Song
 			currentSong?.Dispose();
 			currentSong = SoundEffect.FromFile(currentSongPath);
-			currentSong.Name = new FileInfo(currentSongPath).Name;
-			currentSong.Name.Remove(currentSong.Name.LastIndexOf('.'));
+
+			var names = new FileInfo(currentSongPath).Name.Split('_');
+
+			if (names.Length < 2)
+				currentSong.Name = names[0];
+			else
+				currentSong.Name = names[1];
+
+			currentSong.Name = currentSong.Name.Remove(currentSong.Name.LastIndexOf('.'));
 
 			OutputSys.UpdateOutput(false);
 

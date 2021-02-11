@@ -10,7 +10,9 @@ namespace MusicPlayer
 		static readonly Color _nullColor = new Color("#F0F");
 		public static Color nullColor { get => _nullColor; }
 
-		static readonly Color _white = new Color("#EEE");
+		static readonly Color _whiteBright = new Color("#EEE");
+		public static Color whiteBright { get => _whiteBright; }
+		static readonly Color _white = new Color("#CCC");
 		public static Color white { get => _white; }
 		static readonly Color _gray = new Color("#666");
 		public static Color gray { get => _gray; }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
-using System.Diagnostics;
-using System.Collections.Generic;
+using MusicPlayer.UI;
 
 namespace MusicPlayer
 {
@@ -113,9 +114,9 @@ namespace MusicPlayer
 
 			JsonConvert.DefaultSettings = () => new JsonSerializerSettings() { Formatting = Formatting.Indented };
 
-			File.WriteAllText(root + "/schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
+			File.WriteAllText(root + "/settings.schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
 
-			InactiveSleepTime = new TimeSpan(666666 * 2);
+			InactiveSleepTime = new TimeSpan(666666);
 
 			volume = settings.startingVolume;
 
@@ -159,22 +160,8 @@ namespace MusicPlayer
 
 			if (IsActive)
 			{
-				if (Input.CheckButtonPress(settings.reloadKey))
-				{
-					NullAllData();
-					CreateFilesAndFolders();
-					MusicSys.PlayRandomSong();
-				}
-
-				if (Input.CheckButtonPress(settings.settingsKey))
-					Process.Start(new ProcessStartInfo("explorer", "\"" + settingsPath + "\""));
-
 				if (Input.CheckButtonPress(settings.volumeUpKey)) volume++;
 				if (Input.CheckButtonPress(settings.volumeDownKey)) volume--;
-
-				if (Input.CheckButtonPress(settings.toggleOutputKey)) enableOutput = !enableOutput;
-
-				// if(Input.CheckButtonPress(settings.pauseKey)) ;
 			}
 
 			if (MusicSys.currentSongInstance != null)
@@ -192,40 +179,52 @@ namespace MusicPlayer
 			}
 			tickCooldown -= deltaTime;
 
+			GUI.Reset();
+			Pointer.Reset();
+
 			base.Update(gameTime);
 		}
 
 		protected override void Draw(GameTime gameTime)
 		{
 			// Alpha zero so you can setup a game capture in obs
-			GraphicsDevice.Clear(Color.black);
+			GraphicsDevice.Clear(Color.clear);
 
-			using (var layout = new StackLayout(new Vector2(8), 32, false))
+			sb.Begin();
+
+			sb.Draw(
+				texKirby,
+				new Rectangle(
+					graphics.PreferredBackBufferWidth / 2 + (int)kirbySize.X,
+					graphics.PreferredBackBufferHeight / 2 + (int)kirbySize.Y,
+					kirbySize.X,
+					kirbySize.Y),
+				Color.white);
+
+			foreach (var text in settings.windowTexts)
+				GUI.Text(OutputSys.ParsePerams(text));
+
+			GUI.AddSpace();
+
+			if (GUI.Button("Reload"))
 			{
-				sb.Draw(
-					texKirby,
-					new Rectangle(
-						graphics.PreferredBackBufferWidth / 2 + (int)kirbySize.X,
-						graphics.PreferredBackBufferHeight / 2 + (int)kirbySize.Y,
-						kirbySize.X,
-						kirbySize.Y),
-					Color.white);
-
-				foreach (var line in settings.windowTexts)
-				{
-					if (line.StartsWith('#'))
-						sb.DrawString(bold, OutputSys.ParsePerams(line.Remove(0, 1)), layout.AddElement(), Color.white);
-					else
-						sb.DrawString(font, OutputSys.ParsePerams(line), layout.AddElement(), Color.white);
-				}
-
-				layout.AddElement();
-
-				if (errors.Count > 0)
-					sb.DrawString(font, $"Error ({errors.Count}): {errors[errors.Count - 1]}", layout.AddElement(), Color.red);
-				else
-					sb.DrawString(font, "No errors", layout.AddElement(), Color.white);
+				NullAllData();
+				CreateFilesAndFolders();
+				MusicSys.PlayRandomSong();
 			}
+
+			if (GUI.Button("Outputting " + (enableOutput ? "ON" : "OFF")))
+				enableOutput = !enableOutput;
+
+			if (GUI.Button("Open Settings"))
+				Process.Start(new ProcessStartInfo("explorer", "\"" + settingsPath + "\""));
+
+			if (errors.Count > 0)
+				GUI.Text($"Error ({errors.Count}): {errors[errors.Count - 1]}");
+			else
+				GUI.Text("No errors");
+
+			sb.End();
 
 			base.Draw(gameTime);
 		}
@@ -245,7 +244,7 @@ namespace MusicPlayer
 			// Kinda hacky but idk
 			File.WriteAllText(
 				settingsPath,
-				"{\n\t\"$schema\": \"./settings_schema.json\"," + JsonConvert.SerializeObject(_settings).Remove(0, 1)
+				"{\n\t\"$schema\": \"./settings.schema.json\"," + JsonConvert.SerializeObject(_settings).Remove(0, 1)
 			);
 		}
 

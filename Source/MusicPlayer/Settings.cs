@@ -14,9 +14,6 @@ namespace MusicPlayer
 		public int volumeIncrements = 10;
 		[Description("Time between Ticks. Set to -1 to tick every frame.")]
 		public double tickTime = 1.0;
-		public Inputs settingsKey = Inputs.F1;
-		public Inputs toggleOutputKey = Inputs.F2;
-		public Inputs reloadKey = Inputs.F5;
 		public Inputs volumeUpKey = Inputs.OemPlus;
 		public Inputs volumeDownKey = Inputs.OemMinus;
 		public Inputs pauseKey = Inputs.Space;
@@ -33,10 +30,7 @@ namespace MusicPlayer
 		{
 			"#{song_artist}: {song_name} from {playlist_name}",
 			"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff}",
-			"{audio_volume} / {audio_volume_max} ('{input_volume_down}' '{input_volume_up}')",
-			"Outputting {output_enabled} ('{input_output}')",
-			"Settings ('{input_settings}')",
-			"Reload ('{input_reload}')",
+			"{audio_volume} {audio_volume_bar} {audio_volume_max} ('{input_volume_down}' '{input_volume_up}')",
 		};
 
 		[Description("Outputs tiggered after a new song is being played.")]
