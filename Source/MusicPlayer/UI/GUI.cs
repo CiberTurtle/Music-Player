@@ -47,7 +47,8 @@ namespace MusicPlayer.UI
 
 			var isHovered = new Rect(position + new Vector2(0, itemSize.y / 2), itemSize).Contains(Input.windowMousePosition);
 
-			if (isHovered) Pointer.SetHand();
+			if (isHovered)
+				Pointer.SetHand();
 			Text(isHovered ? "#" + text : text);
 
 			return isHovered && Input.CheckButtonPress(Inputs.MouseLeft);

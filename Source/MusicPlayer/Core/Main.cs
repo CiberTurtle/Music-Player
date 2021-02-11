@@ -60,9 +60,7 @@ namespace MusicPlayer
 					if (string.IsNullOrEmpty(json))
 						_settings = new Settings();
 					else
-					{
 						_settings = JsonConvert.DeserializeObject<Settings>(json);
-					}
 
 					WriteSettings();
 				}
@@ -116,7 +114,7 @@ namespace MusicPlayer
 
 			File.WriteAllText(root + "/settings.schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
 
-			InactiveSleepTime = new TimeSpan(666666);
+			InactiveSleepTime = new TimeSpan(333333);
 
 			volume = settings.startingVolume;
 
@@ -146,6 +144,7 @@ namespace MusicPlayer
 			sb = new SpriteBatch(GraphicsDevice);
 
 			texKirby = Content.Load<Texture2D>("Sprites/Kirby");
+
 			font = Content.Load<SpriteFont>("Fonts/Regular");
 			bold = Content.Load<SpriteFont>("Fonts/Bold");
 		}

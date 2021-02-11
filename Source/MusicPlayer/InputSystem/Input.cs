@@ -54,8 +54,6 @@ namespace MusicPlayer
 			else
 				windowMousePosition = Vector2Int.zero;
 
-			windowMousePosition = mouseState.Position;
-
 			_oldMouseButtons = _mouseButtons;
 			_mouseButtons = new List<Inputs>();
 
@@ -77,9 +75,7 @@ namespace MusicPlayer
 			_keyboardBuffer.Clear();
 
 			if (keyboardString.Length > 0)
-			{
 				keyboardLastChar = keyboardString[keyboardString.Length - 1];
-			}
 
 			keyboardLastKey = _keyboardLastKeyBuffer;
 
@@ -89,13 +85,9 @@ namespace MusicPlayer
 			_currentKeys.AddRange(Keyboard.GetState().GetPressedKeys());
 
 			if (_currentKeys.Count > 0)
-			{
 				keyboardKey = _currentKeys[_currentKeys.Count - 1];
-			}
 			else
-			{
 				keyboardKey = Keys.None;
-			}
 			#endregion
 		}
 

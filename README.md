@@ -40,9 +40,6 @@
 	"startingVolume": 10, // The starting volume in increments
 	"volumeIncrements": 10, // The max volume
 	"tickTime": 1.0, // Time between ticks
-	"settingsKey": "F1",
-	"toggleOutputKey": "F2",
-	"reloadKey": "F5",
 	"volumeUpKey": "OemPlus",
 	"volumeDownKey": "OemMinus",
 	"pauseKey": "Space",
@@ -52,10 +49,7 @@
 		// The text that will be in the window (see #Parameters) (use "#" to make the line bold)
 		"#{song_artist}: {song_name} from {playlist_name}",
 		"{song_timeplayed_mm:ss.ff} {song_timebar_10} {song_duration_mm:ss.ff}",
-		"{audio_volume} / {audio_volume_max} ('{input_volume_down}' '{input_volume_up}')",
-		"Outputting {output_enabled} ('{input_output}')",
-		"Settings ('{input_settings}')",
-		"Reload ('{input_reload}')"
+		"{audio_volume} / {audio_volume_max} ('{input_volume_down}' '{input_volume_up}')"
 	],
 	"outputsNewSong": [
 		// Files that will be outputted to after a new song is played
@@ -82,30 +76,31 @@
 
 Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 
-| Parameter Name             | Description                                                |
-| -------------------------- | ---------------------------------------------------------- |
-| `song_name`                | The song's name (never could have guessed)                 |
-| `song_artist`              | The person of the song/origin of the song                  |
-| `playlist_name`            | The name of the active playlist                            |
-| `song_duration_mm:ss`      | The length of the song in `minutes:seconds`                |
-| `song_duration_mm:ss.ff`   | The length of the song in `minutes:seconds.milliseconds`   |
-| `song_timeplayed_mm:ss`    | The playtime of the song in `minutes:seconds`              |
-| `song_timeplayed_mm:ss.ff` | The playtime of the song in `minutes:seconds.milliseconds` |
-| `song_timebar_10`          | A nice looking bar that is 10 segments long `[----------]` |
-| `audio_volume`             | The current volume in increments                           |
-| `audio_volume_max`         | The max volume in increments                               |
-| `audio_volume_percent`     | The volume as a percent rounded to the nearest hole number |
-| `output_enabled`           | Whether outputing is enabled                               |
-| `input_settings`           | The key to open settings.json                              |
-| `input_reload`             | The key to reaload                                         |
-| `input_volume_up`          | The key to raise the volume                                |
-| `input_volume_up`          | The key to lower the volume                                |
+| Parameter Name             | Description                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
+| `song_name`                | The song's name (never could have guessed)                                                   |
+| `song_artist`              | The person of the song/origin of the song                                                    |
+| `playlist_name`            | The name of the active playlist                                                              |
+| `song_duration_mm:ss`      | The length of the song in `minutes:seconds`                                                  |
+| `song_duration_mm:ss.ff`   | The length of the song in `minutes:seconds.milliseconds`                                     |
+| `song_timeplayed_mm:ss`    | The playtime of the song in `minutes:seconds`                                                |
+| `song_timeplayed_mm:ss.ff` | The playtime of the song in `minutes:seconds.milliseconds`                                   |
+| `song_timebar_10`          | A nice looking bar that is 10 segments long to represent the time in the song `[----------]` |
+| `audio_volume`             | The current volume in increments                                                             |
+| `audio_volume_max`         | The max volume in increments                                                                 |
+| `audio_volume_percent`     | The volume as a percent rounded to the nearest whole number                                  |
+| `audio_volume_bar`         | The volume as a fairly neat looking bar with the amount of segments being the max volume     |
+| `output_enabled`           | Whether outputing is enabled                                                                 |
+| `input_volume_up`          | The key to raise the volume                                                                  |
+| `input_volume_up`          | The key to lower the volume                                                                  |
 
 ## Plans
 
 - Better code
   - Better optimisation
-  - Better organization
+    - Caching
+      - Outputs
+      - Playlists
 - Better parameters
   - Parameter arguments
   - Better parsing
@@ -113,5 +108,3 @@ Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
   - Support for `.mp3` files
   - Music streaming
   - Music from the web?
-- An actual GUI
-  - That would be neat
