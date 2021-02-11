@@ -10,7 +10,7 @@ namespace MusicPlayer
 	public class Input
 	{
 		#region Mouse
-		public static Point windowMousePosition = Point.Zero;
+		public static Vector2Int windowMousePosition = Vector2Int.zero;
 
 		public static bool isMouseInWindow = false;
 
@@ -48,6 +48,11 @@ namespace MusicPlayer
 
 			#region Mouse
 			MouseState mouseState = Mouse.GetState();
+
+			if (new Rect(0, 0, Main.graphics.PreferredBackBufferWidth, Main.graphics.PreferredBackBufferHeight).Contains(mouseState.Position))
+				windowMousePosition = mouseState.Position;
+			else
+				windowMousePosition = Vector2Int.zero;
 
 			windowMousePosition = mouseState.Position;
 

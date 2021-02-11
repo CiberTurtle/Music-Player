@@ -179,8 +179,33 @@ namespace MusicPlayer
 			}
 			tickCooldown -= deltaTime;
 
-			GUI.Reset();
 			Pointer.Reset();
+			GUI.Update();
+
+			foreach (var text in settings.windowTexts)
+				GUI.Text(OutputSys.ParsePerams(text));
+
+			GUI.LineBreak();
+
+			if (GUI.Button("Reload"))
+			{
+				NullAllData();
+				CreateFilesAndFolders();
+				MusicSys.PlayRandomSong();
+			}
+
+			if (GUI.Button("Outputting " + (enableOutput ? "ON" : "OFF")))
+				enableOutput = !enableOutput;
+
+			if (GUI.Button("Open Settings"))
+				Process.Start(new ProcessStartInfo("explorer", "\"" + settingsPath + "\""));
+
+			GUI.LineBreak();
+
+			if (errors.Count > 0)
+				GUI.Text($"Error ({errors.Count}): {errors[errors.Count - 1]}");
+			else
+				GUI.Text("No errors!");
 
 			base.Update(gameTime);
 		}
@@ -201,28 +226,7 @@ namespace MusicPlayer
 					kirbySize.Y),
 				Color.white);
 
-			foreach (var text in settings.windowTexts)
-				GUI.Text(OutputSys.ParsePerams(text));
-
-			GUI.AddSpace();
-
-			if (GUI.Button("Reload"))
-			{
-				NullAllData();
-				CreateFilesAndFolders();
-				MusicSys.PlayRandomSong();
-			}
-
-			if (GUI.Button("Outputting " + (enableOutput ? "ON" : "OFF")))
-				enableOutput = !enableOutput;
-
-			if (GUI.Button("Open Settings"))
-				Process.Start(new ProcessStartInfo("explorer", "\"" + settingsPath + "\""));
-
-			if (errors.Count > 0)
-				GUI.Text($"Error ({errors.Count}): {errors[errors.Count - 1]}");
-			else
-				GUI.Text("No errors");
+			GUI.Draw();
 
 			sb.End();
 
