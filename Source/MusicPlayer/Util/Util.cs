@@ -1,5 +1,6 @@
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 namespace MusicPlayer
 {
@@ -31,6 +32,11 @@ namespace MusicPlayer
 			sb.Append(']');
 
 			return sb.ToString();
+		}
+
+		public static void OpenFile(string path)
+		{
+			Process.Start(new ProcessStartInfo("explorer", "\"" + path + "\""));
 		}
 	}
 }

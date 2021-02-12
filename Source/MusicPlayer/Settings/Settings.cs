@@ -15,6 +15,7 @@ namespace MusicPlayer
 		[Description("Time between Ticks. Set to -1 to tick every frame.")]
 		public double tickTime = 1.0;
 		public bool throttleWhenUnfocused = true;
+		public bool enableShakingText = true;
 		public Inputs volumeUpKey = Inputs.OemPlus;
 		public Inputs volumeDownKey = Inputs.OemMinus;
 		public Inputs pauseKey = Inputs.Space;

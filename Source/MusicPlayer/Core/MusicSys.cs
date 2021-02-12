@@ -26,8 +26,10 @@ namespace MusicPlayer
 			set => _playlists = value;
 		}
 
-		public static void PlayRandomSong()
+		public static void PlayRandomSongFromPlaylist()
 		{
+			Stop();
+
 			if (currentPlaylistPath == null)
 			{
 				Main.LogError("There are no active playlists!");
@@ -53,13 +55,12 @@ namespace MusicPlayer
 
 			currentSongPath = songs[Main.rng.Next(songs.Count)];
 
-			// Don't play the same song again, play it again ifayhet agai rlye is only one song
+			// Don't play the same song again, play it again if there is only one song
 			if (currentSong != null && songs.Count > 1)
 				while (currentSongPath.Contains(currentSong.Name))
 					currentSongPath = songs[Main.rng.Next(songs.Count)];
 
 			// Load Song
-			currentSong?.Dispose();
 			currentSong = SoundEffect.FromFile(currentSongPath);
 
 			var names = new FileInfo(currentSongPath).Name.Split('_');
@@ -88,7 +89,7 @@ namespace MusicPlayer
 			MusicSys.currentSong = null;
 			MusicSys.currentSongInstance?.Dispose();
 			MusicSys.currentSongInstance = null;
-			MusicSys.currentPlaylistPath = string.Empty;
+			// MusicSys.currentPlaylistPath = string.Empty;
 		}
 	}
 }

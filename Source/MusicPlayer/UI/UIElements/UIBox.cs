@@ -13,7 +13,6 @@ namespace MusicPlayer.UI.UIElements
 			this.color = color;
 		}
 
-
 		public void Draw(Vector2 position)
 		{
 			Graphics.DrawBox(rect, color);

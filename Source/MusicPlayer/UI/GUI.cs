@@ -5,11 +5,10 @@ namespace MusicPlayer.UI
 {
 	public static class GUI
 	{
-		public static Vector2 position = Vector2.zero;
-		public static Vector2 itemSize = new Vector2(Main.graphics.PreferredBackBufferWidth, 32);
+		public static readonly Vector2 itemSize = new Vector2(Main.graphics.PreferredBackBufferWidth, 24);
+		public static readonly Vector2 offset = new Vector2(16);
 
-		public static Vector2 offset = new Vector2(16);
-		public static Vector2 textPadding = new Vector2(0, 8);
+		public static Vector2 position = Vector2.zero;
 
 		public static List<IDrawable> draws = new List<IDrawable>();
 
@@ -21,7 +20,7 @@ namespace MusicPlayer.UI
 
 		public static void Draw()
 		{
-			position = offset + textPadding;
+			position = offset;
 
 			foreach (var draw in draws)
 			{
@@ -32,20 +31,16 @@ namespace MusicPlayer.UI
 			}
 		}
 
-		public static void Text(string text)
-		{
-			if (text.StartsWith('#'))
-				AddDraw(new UIText(text.Remove(0, 1), Color.whiteBright, Main.bold));
-			else
-				AddDraw(new UIText(text, Color.white, Main.font));
-		}
+		public static void Text(string text) =>
+			AddDraw(new UIText(text, Color.white, Main.font));
 
-		public static void Text(string text, Color color, bool isBold) =>
-			AddDraw(new UIText(text, color, isBold ? Main.bold : Main.font));
+		public static void Text(string text, Color color, Vector2 offset) =>
+			AddDraw(new UIText(text, color, Main.font, offset));
 
-		public static bool Button(string text)
+		public static bool Button(string text, bool makeFancy = true)
 		{
-			text = $"[ {text} ]";
+			if (makeFancy)
+				text = $"[ {text} ]";
 
 			var rect = new Rect(position + new Vector2(0, itemSize.y / 2), itemSize);
 			var isHovered = rect.Contains(Input.windowMousePosition);
@@ -54,14 +49,22 @@ namespace MusicPlayer.UI
 			{
 				Pointer.SetHand();
 
-				AddDraw(new UIBox(rect, new Color("#FF750444")));
-
-				Text("#" + text);
+				AddDraw(new UIBox(rect, new Color("#FF750422")));
+				Text(
+					text, Color.whiteBright,
+					Main.settings.enableShakingText ?
+						new Vector2((float)(Main.rng.Next(0, 4) - 1) / 3, (float)(Main.rng.Next(0, 4) - 1) / 3) :
+						Vector2.zero);
 			}
 			else
-				Text(text);
+				Text(text, Color.white, Vector2.zero);
 
 			return isHovered && Input.CheckButtonPress(Inputs.MouseLeft);
+		}
+
+		public static void Checkbox(string text, ref bool state)
+		{
+			if (Button((state ? "[X] " : "[ ] ") + text, false)) state = !state;
 		}
 
 		public static void DrawCustomGUI()

@@ -74,7 +74,6 @@ namespace MusicPlayer
 		public static string root;
 		public static string settingsPath = @"\settings.json";
 
-		public static SpriteFont bold;
 		public static SpriteFont font;
 
 		static int _volume;
@@ -149,7 +148,6 @@ namespace MusicPlayer
 			sb = new SpriteBatch(GraphicsDevice);
 
 			font = Content.Load<SpriteFont>("Fonts/Regular");
-			bold = Content.Load<SpriteFont>("Fonts/Bold");
 		}
 
 		protected override void Update(GameTime gameTime)
@@ -169,7 +167,7 @@ namespace MusicPlayer
 			if (MusicSys.currentSongInstance != null)
 			{
 				if (MusicSys.currentSongInstance.State != SoundState.Playing)
-					MusicSys.PlayRandomSong();
+					MusicSys.PlayRandomSongFromPlaylist();
 
 				timePlayed += delta;
 			}
@@ -214,7 +212,10 @@ namespace MusicPlayer
 		{
 			_settings = null;
 			MusicSys.playlists = null;
-			current.InactiveSleepTime = settings.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
+			current.InactiveSleepTime =
+				settings.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
+
+			Main.CreateFilesAndFolders();
 		}
 
 		public static void WriteSettings()
