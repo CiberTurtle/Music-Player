@@ -2,9 +2,6 @@ namespace MusicPlayer.UI
 {
 	public interface IMenu
 	{
-		void Update()
-		{
-
-		}
+		void Update();
 	}
 }

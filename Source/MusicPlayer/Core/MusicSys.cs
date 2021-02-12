@@ -13,19 +13,21 @@ namespace MusicPlayer
 
 		public static string currentPlaylistPath;
 
-		public static void PlayRandomSong()
+		static string[] _playlists;
+		public static string[] playlists
 		{
-			// Find Active Playlist
-			var playlists = Directory.GetDirectories(Util.ParsePath(Main.settings.musicPath)).ToList();
-
-			if (playlists?.Count == 0)
+			get
 			{
-				Main.LogError("There are no playlists in the music folder!");
-				return;
+				if (_playlists == null)
+					_playlists = Directory.GetDirectories(Util.ParsePath(Main.settings.musicPath));
+				return _playlists;
 			}
 
-			currentPlaylistPath = playlists.Find((x) => !x.Contains('@'));
+			set => _playlists = value;
+		}
 
+		public static void PlayRandomSong()
+		{
 			if (currentPlaylistPath == null)
 			{
 				Main.LogError("There are no active playlists!");
@@ -78,6 +80,15 @@ namespace MusicPlayer
 			currentSongInstance?.Dispose();
 			currentSongInstance = currentSong.CreateInstance();
 			currentSongInstance.Play();
+		}
+
+		public static void Stop()
+		{
+			MusicSys.currentSong?.Dispose();
+			MusicSys.currentSong = null;
+			MusicSys.currentSongInstance?.Dispose();
+			MusicSys.currentSongInstance = null;
+			MusicSys.currentPlaylistPath = string.Empty;
 		}
 	}
 }

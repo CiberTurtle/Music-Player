@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,11 +8,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using MusicPlayer.UI;
+using MusicPlayer.UI.Menus;
 
 namespace MusicPlayer
 {
 	public class Main : Game
 	{
+		public static Main current { get; private set; }
+
 		public static GraphicsDeviceManager graphics;
 		public static SpriteBatch sb;
 
@@ -23,8 +25,8 @@ namespace MusicPlayer
 			get
 			{
 				if (_rng == null)
-					_rng = new Random(DateTime.Now.Millisecond);
-				return _rng;
+					_rng = new Random(DateTime.Now.Ticks.GetHashCode());
+				return new Random(DateTime.Now.Ticks.GetHashCode());
 			}
 		}
 
@@ -72,8 +74,6 @@ namespace MusicPlayer
 		public static string root;
 		public static string settingsPath = @"\settings.json";
 
-		public static Point kirbySize = new Point(64 * 4);
-		public static Texture2D texKirby;
 		public static SpriteFont bold;
 		public static SpriteFont font;
 
@@ -99,13 +99,18 @@ namespace MusicPlayer
 
 		public Main()
 		{
+			current = this;
+
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
 			IsFixedTimeStep = true;
 
 			graphics.SynchronizeWithVerticalRetrace = true;
+			graphics.PreferMultiSampling = true;
 			graphics.ApplyChanges();
+
+			Window.TextInput += (sender, args) => Input.TextInput(args);
 
 			root = Environment.CurrentDirectory;
 			settingsPath = root + settingsPath;
@@ -114,11 +119,11 @@ namespace MusicPlayer
 
 			File.WriteAllText(root + "/settings.schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
 
-			InactiveSleepTime = new TimeSpan(333333);
-
 			volume = settings.startingVolume;
 
-			Window.TextInput += (sender, args) => Input.TextInput(args);
+			Menu.OpenMenu(new MenuMain());
+
+			ReloadData();
 		}
 
 		protected override void Initialize()
@@ -131,7 +136,7 @@ namespace MusicPlayer
 
 		protected override void OnExiting(object sender, EventArgs args)
 		{
-			NullAllData();
+			ReloadData();
 			OutputSys.UpdateAllOutputs(true);
 
 			// WriteSettings();
@@ -142,8 +147,6 @@ namespace MusicPlayer
 		protected override void LoadContent()
 		{
 			sb = new SpriteBatch(GraphicsDevice);
-
-			texKirby = Content.Load<Texture2D>("Sprites/Kirby");
 
 			font = Content.Load<SpriteFont>("Fonts/Regular");
 			bold = Content.Load<SpriteFont>("Fonts/Bold");
@@ -181,23 +184,7 @@ namespace MusicPlayer
 			Pointer.Reset();
 			GUI.Update();
 
-			foreach (var text in settings.windowTexts)
-				GUI.Text(OutputSys.ParsePerams(text));
-
-			GUI.LineBreak();
-
-			if (GUI.Button("Reload"))
-			{
-				NullAllData();
-				CreateFilesAndFolders();
-				MusicSys.PlayRandomSong();
-			}
-
-			if (GUI.Button("Outputting " + (enableOutput ? "ON" : "OFF")))
-				enableOutput = !enableOutput;
-
-			if (GUI.Button("Open Settings"))
-				Process.Start(new ProcessStartInfo("explorer", "\"" + settingsPath + "\""));
+			Menu.Update();
 
 			GUI.LineBreak();
 
@@ -212,18 +199,9 @@ namespace MusicPlayer
 		protected override void Draw(GameTime gameTime)
 		{
 			// Alpha zero so you can setup a game capture in obs
-			GraphicsDevice.Clear(Color.clear);
+			GraphicsDevice.Clear(new Color("#1110"));
 
-			sb.Begin();
-
-			sb.Draw(
-				texKirby,
-				new Rectangle(
-					graphics.PreferredBackBufferWidth / 2 + (int)kirbySize.X,
-					graphics.PreferredBackBufferHeight / 2 + (int)kirbySize.Y,
-					kirbySize.X,
-					kirbySize.Y),
-				Color.white);
+			sb.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, null);
 
 			GUI.Draw();
 
@@ -232,14 +210,11 @@ namespace MusicPlayer
 			base.Draw(gameTime);
 		}
 
-		public static void NullAllData()
+		public static void ReloadData()
 		{
 			_settings = null;
-			MusicSys.currentSong?.Dispose();
-			MusicSys.currentSong = null;
-			MusicSys.currentSongInstance?.Dispose();
-			MusicSys.currentSongInstance = null;
-			MusicSys.currentPlaylistPath = string.Empty;
+			MusicSys.playlists = null;
+			current.InactiveSleepTime = settings.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
 		}
 
 		public static void WriteSettings()

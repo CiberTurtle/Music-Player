@@ -1,10 +1,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using MusicPlayer;
 
-namespace MusicPlayer.UI
+namespace MusicPlayer.UI.UIElements
 {
 	public struct UIText : IDrawable
 	{
+		public bool space => true;
+
 		public string text;
 		public Color color;
 		public SpriteFont font;

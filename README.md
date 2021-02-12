@@ -15,21 +15,21 @@
 
 ```
 - Music
-	- Playlist
-		- A song that will play.wav
-		- A person who makes music_A song that was made by a person who makes music.wav
-		- @ A song that won't play.wav
-		- @A song that also won't play.wav
-		- A song that can't play.mp3
-	- @ Disabled Playlist
+  - Playlist
+  - A song that will play.wav
+    - A person who makes music_A song that was made by a person who makes music.wav
+    - @ A song that won't play.wav
+    - @A song that also won't play.wav
+    - A song that can't play.mp3
+  - @ Disabled Playlist
 
 - Output
-	- song_artist.txt
-	- song_name.txt
-	- song_time.txt
+  - song_artist.txt
+  - song_name.txt
+  - song_time.txt
 
-	- settings.json (see #Settings)
-	- settings_schema.json (Ignore this)
+  - settings.json (see #Settings)
+  - settings_schema.json (Ignore this)
 ```
 
 ### Settings
@@ -40,6 +40,7 @@
 	"startingVolume": 10, // The starting volume in increments
 	"volumeIncrements": 10, // The max volume
 	"tickTime": 1.0, // Time between ticks
+	"throttleWhenUnfocused": true, // Caps fps when the windown is not active/focused
 	"volumeUpKey": "OemPlus",
 	"volumeDownKey": "OemMinus",
 	"pauseKey": "Space",
@@ -73,6 +74,8 @@
 ```
 
 ### Parameters
+
+> Arguments are not supported yet
 
 Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 

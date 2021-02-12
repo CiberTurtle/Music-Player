@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using MusicPlayer.UI.UIElements;
 
 namespace MusicPlayer.UI
 {
 	public static class GUI
 	{
-		static Vector2 position = Vector2.zero;
-		static Vector2 itemSize = new Vector2(Main.graphics.PreferredBackBufferWidth, 32);
+		public static Vector2 position = Vector2.zero;
+		public static Vector2 itemSize = new Vector2(Main.graphics.PreferredBackBufferWidth, 32);
 
-		static Vector2 offset = new Vector2(16);
-		static Vector2 textPadding = new Vector2(0, 8);
+		public static Vector2 offset = new Vector2(16);
+		public static Vector2 textPadding = new Vector2(0, 8);
 
-		static List<IDrawable> draws = new List<IDrawable>();
+		public static List<IDrawable> draws = new List<IDrawable>();
 
 		public static void Update()
 		{
@@ -26,7 +27,8 @@ namespace MusicPlayer.UI
 			{
 				draw.Draw(position);
 
-				AddSpace();
+				if (draw.space)
+					AddSpace();
 			}
 		}
 
@@ -45,19 +47,36 @@ namespace MusicPlayer.UI
 		{
 			text = $"[ {text} ]";
 
-			var isHovered = new Rect(position + new Vector2(0, itemSize.y / 2), itemSize).Contains(Input.windowMousePosition);
+			var rect = new Rect(position + new Vector2(0, itemSize.y / 2), itemSize);
+			var isHovered = rect.Contains(Input.windowMousePosition);
 
 			if (isHovered)
+			{
 				Pointer.SetHand();
-			Text(isHovered ? "#" + text : text);
+
+				AddDraw(new UIBox(rect, new Color("#FF750444")));
+
+				Text("#" + text);
+			}
+			else
+				Text(text);
 
 			return isHovered && Input.CheckButtonPress(Inputs.MouseLeft);
+		}
+
+		public static void DrawCustomGUI()
+		{
+			foreach (var text in Main.settings.windowTexts)
+				GUI.Text(OutputSys.ParsePerams(text));
+
+			GUI.LineBreak();
 		}
 
 		public static void AddDraw(IDrawable draw)
 		{
 			draws.Add(draw);
-			AddSpace();
+			if (draw.space)
+				AddSpace();
 		}
 
 		public static void LineBreak() => Text(string.Empty);

@@ -28,7 +28,7 @@ namespace MusicPlayer
 							if(MusicSys.currentSong == null)
 								return "No song playing!";
 
-							var elements = MusicSys.currentSong.Name.Split('_');
+							var elements = new FileInfo(MusicSys.currentSongPath).Name.Split('_');
 							if (elements.Length < 2) return "No artist";
 							return elements[0];
 						} },
