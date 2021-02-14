@@ -9,6 +9,7 @@ using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using MusicPlayer.UI;
 using MusicPlayer.UI.Menus;
+using System.Linq;
 
 namespace MusicPlayer
 {
@@ -26,75 +27,23 @@ namespace MusicPlayer
 			{
 				if (_rng == null)
 					_rng = new Random(DateTime.Now.Ticks.GetHashCode());
-				return new Random(DateTime.Now.Ticks.GetHashCode());
-			}
-		}
-
-		static JsonSerializer _serializer;
-		public static JsonSerializer serializer
-		{
-			get
-			{
-				if (_serializer == null)
-				{
-					_serializer = JsonSerializer.Create(new JsonSerializerSettings()
-					{
-
-					});
-				}
-
-				return _serializer;
-			}
-		}
-
-		static Settings _settings;
-		public static Settings settings
-		{
-			get
-			{
-				if (_settings == null)
-				{
-					if (!File.Exists(settingsPath))
-						File.Create(settingsPath);
-
-					var json = File.ReadAllText(settingsPath);
-
-					if (string.IsNullOrEmpty(json))
-						_settings = new Settings();
-					else
-						_settings = JsonConvert.DeserializeObject<Settings>(json);
-
-					WriteSettings();
-				}
-
-				return _settings;
+				return _rng;
 			}
 		}
 
 		public static string root;
-		public static string settingsPath = @"\settings.json";
 
-		public static SpriteFont font;
-
-		static int _volume;
-		public static int volume
-		{
-			get => _volume;
-			set
-			{
-				value = Math.Clamp(value, 0, settings.volumeIncrements);
-
-				_volume = value;
-				SoundEffect.MasterVolume = value * (1.0f / settings.volumeIncrements);
-			}
-		}
 		public static bool enableOutput = true;
 
 		public static double tickCooldown;
 		public static long lastTickTime;
 		public static TimeSpan timePlayed;
+		public static double deltaTime;
 
 		public static List<string> errors = new List<string>();
+
+		// Content
+		public static SpriteFont font;
 
 		public Main()
 		{
@@ -103,7 +52,7 @@ namespace MusicPlayer
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
-			IsFixedTimeStep = true;
+			IsFixedTimeStep = false;
 
 			graphics.SynchronizeWithVerticalRetrace = true;
 			graphics.PreferMultiSampling = true;
@@ -112,13 +61,20 @@ namespace MusicPlayer
 			Window.TextInput += (sender, args) => Input.TextInput(args);
 
 			root = Environment.CurrentDirectory;
-			settingsPath = root + settingsPath;
+
+			var args = Environment.GetCommandLineArgs().ToList();
+
+			if (args.Contains("--clear-settings"))
+				File.WriteAllText(Settings.settingsPath, string.Empty);
+
+			if (args.Contains("--clear-output"))
+				Directory.Delete(Settings.current.outputFolder);
 
 			JsonConvert.DefaultSettings = () => new JsonSerializerSettings() { Formatting = Formatting.Indented };
 
 			File.WriteAllText(root + "/settings.schema.json", new JSchemaGenerator().Generate(typeof(Settings)).ToString(SchemaVersion.Draft7));
 
-			volume = settings.startingVolume;
+			MusicSys.volume = Settings.current.startingVolume;
 
 			Menu.OpenMenu(new MenuMain());
 
@@ -153,15 +109,15 @@ namespace MusicPlayer
 		protected override void Update(GameTime gameTime)
 		{
 			var delta = new TimeSpan(DateTime.Now.Ticks - lastTickTime);
-			var deltaTime = delta.TotalSeconds;
+			deltaTime = delta.TotalSeconds;
 
 			lastTickTime = DateTime.Now.Ticks;
 			Input.Update();
 
 			if (IsActive)
 			{
-				if (Input.CheckButtonPress(settings.volumeUpKey)) volume++;
-				if (Input.CheckButtonPress(settings.volumeDownKey)) volume--;
+				if (Input.CheckButtonPress(Settings.current.volumeUpKey)) MusicSys.volume++;
+				if (Input.CheckButtonPress(Settings.current.volumeDownKey)) MusicSys.volume--;
 			}
 
 			if (MusicSys.currentSongInstance != null)
@@ -174,12 +130,11 @@ namespace MusicPlayer
 
 			if (tickCooldown < 0)
 			{
-				tickCooldown = settings.tickTime;
+				tickCooldown = Settings.current.tickTime;
 				OutputSys.UpdateOutput(true);
 			}
 			tickCooldown -= deltaTime;
 
-			Pointer.Reset();
 			GUI.Update();
 
 			Menu.Update();
@@ -210,30 +165,23 @@ namespace MusicPlayer
 
 		public static void ReloadData()
 		{
-			_settings = null;
+			Settings.MakeDataNull();
 			MusicSys.playlists = null;
 			current.InactiveSleepTime =
-				settings.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
+				Settings.current.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
 
 			Main.CreateFilesAndFolders();
-		}
 
-		public static void WriteSettings()
-		{
-			// Kinda hacky but idk
-			File.WriteAllText(
-				settingsPath,
-				"{\n\t\"$schema\": \"./settings.schema.json\"," + JsonConvert.SerializeObject(_settings).Remove(0, 1)
-			);
+			// Console.WriteLine(Settings.current.accentColor);
 		}
 
 		public static void CreateFilesAndFolders()
 		{
-			if (!Directory.Exists(Util.ParsePath(settings.musicPath)))
-				Directory.CreateDirectory(Util.ParsePath(settings.musicPath));
+			if (!Directory.Exists(Settings.current.musicFolder))
+				Directory.CreateDirectory(Settings.current.musicFolder);
 
-			if (!Directory.Exists(Util.ParsePath(settings.outputPath)))
-				Directory.CreateDirectory(Util.ParsePath(settings.outputPath));
+			if (!Directory.Exists(Settings.current.outputFolder))
+				Directory.CreateDirectory(Settings.current.outputFolder);
 		}
 
 		public static void LogError(string error)

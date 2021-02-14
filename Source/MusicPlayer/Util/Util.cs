@@ -36,7 +36,7 @@ namespace MusicPlayer
 
 		public static void OpenFile(string path)
 		{
-			Process.Start(new ProcessStartInfo("explorer", "\"" + path + "\""));
+			Process.Start(new ProcessStartInfo("explorer", "\"" + path.Replace('/', '\\') + "\""));
 		}
 	}
 }

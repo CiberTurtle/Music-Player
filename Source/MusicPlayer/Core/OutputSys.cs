@@ -15,7 +15,7 @@ namespace MusicPlayer
 		{
 			if (!Main.enableOutput && !forceOutput) return;
 
-			foreach (var output in isTick ? Main.settings.outputsEveryTick : Main.settings.outputsNewSong)
+			foreach (var output in isTick ? Settings.current.outputsEveryTick : Settings.current.outputsNewSong)
 			{
 				var text = output.text;
 
@@ -27,13 +27,15 @@ namespace MusicPlayer
 				{
 					output.lastOutput = hashCode;
 
-					using (var fs = File.Open(Util.ParsePath(Main.settings.outputPath + output.path), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+					using (var fs = File.Open(Settings.current.outputFolder + output.path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
 					{
 						var bytes = Encoding.UTF8.GetBytes(text);
 						fs.Write(bytes, 0, bytes.Length);
 					}
 				}
 			}
+
+			Main.current.Window.Title = ParsePerams(Settings.current.windowTitle);
 		}
 
 		public static string ParsePerams(string text)

@@ -7,8 +7,24 @@ namespace MusicPlayer.UI
 	{
 		public static readonly Vector2 itemSize = new Vector2(Main.graphics.PreferredBackBufferWidth, 24);
 		public static readonly Vector2 offset = new Vector2(16);
+		public static readonly Vector2 hoverOffsetUpSpeed = new Vector2(4, 0);
+		public static readonly Vector2 hoverOffsetDownSpeed = new Vector2(8, 0);
+		public static readonly Vector2 hoverOffsetMax = new Vector2(4, 0);
 
 		public static Vector2 position = Vector2.zero;
+		static Vector2 _hoverOffset = Vector2.zero;
+		public static Vector2 hoverOffset
+		{
+			get => _hoverOffset;
+			set
+			{
+				if (Settings.current.staticUI) return;
+
+				_hoverOffset = value;
+				_hoverOffset.x = Math.Clamp(_hoverOffset.x, 0, hoverOffsetMax.x);
+			}
+		}
+		public static Vector2 hoverPos;
 
 		public static List<IDrawable> draws = new List<IDrawable>();
 
@@ -47,17 +63,30 @@ namespace MusicPlayer.UI
 
 			if (isHovered)
 			{
+				if (hoverPos == position)
+					hoverOffset += new Vector2(hoverOffsetUpSpeed.x * (float)Main.deltaTime * 10, 0);
+				else
+					hoverOffset = Vector2.zero;
+
+				hoverPos = position;
+
 				Pointer.SetHand();
 
-				AddDraw(new UIBox(rect, new Color("#FF750422")));
-				Text(
-					text, Color.whiteBright,
-					Main.settings.enableShakingText ?
-						new Vector2((float)(Main.rng.Next(0, 4) - 1) / 3, (float)(Main.rng.Next(0, 4) - 1) / 3) :
-						Vector2.zero);
+				AddDraw(new UIBox(rect, Settings.current.accentColor.ChangeAlpha(0.2f)));
+				Text(text, Color.whiteBright, hoverOffset);
 			}
 			else
-				Text(text, Color.white, Vector2.zero);
+			{
+				if (hoverPos == position)
+				{
+					hoverOffset -= new Vector2(hoverOffsetDownSpeed.x * (float)Main.deltaTime * 10, 0);
+					Text(text, Color.white, hoverOffset);
+
+					Pointer.Reset();
+				}
+				else
+					Text(text, Color.white, Vector2.zero);
+			}
 
 			return isHovered && Input.CheckButtonPress(Inputs.MouseLeft);
 		}
@@ -69,7 +98,7 @@ namespace MusicPlayer.UI
 
 		public static void DrawCustomGUI()
 		{
-			foreach (var text in Main.settings.windowTexts)
+			foreach (var text in Settings.current.windowTexts)
 				GUI.Text(OutputSys.ParsePerams(text));
 
 			GUI.LineBreak();

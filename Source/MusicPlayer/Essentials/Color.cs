@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 namespace MusicPlayer
 {
@@ -37,18 +38,6 @@ namespace MusicPlayer
 
 		public const double epsilon = 0.000010;
 		public const double epsilonNormalSqrt = 1e-150;
-		#endregion
-
-		#region Feilds
-		static System.Drawing.ColorConverter _converter;
-		public static System.Drawing.ColorConverter converter
-		{
-			get
-			{
-				if (_converter == null) _converter = new System.Drawing.ColorConverter();
-				return _converter;
-			}
-		}
 		#endregion
 
 		#region Methods
@@ -96,8 +85,8 @@ namespace MusicPlayer
 		#endregion
 
 		#region Feilds
-		public float grayscale { get => 0.299f * r + 0.587f * g + 0.114f * b; }
-		public float max { get => (float)Math.Max(Math.Max(r, g), b); }
+		[JsonIgnore] public float grayscale { get => 0.299f * r + 0.587f * g + 0.114f * b; }
+		[JsonIgnore] public float max { get => (float)Math.Max(Math.Max(r, g), b); }
 		#endregion
 
 		#region Constructors
@@ -174,6 +163,12 @@ namespace MusicPlayer
 		#endregion
 
 		#region Methods
+		public Color ChangeAlpha(float alpha)
+		{
+			a = alpha;
+			return this;
+		}
+
 		public string ToHex(int length = 8)
 		{
 			switch (length)

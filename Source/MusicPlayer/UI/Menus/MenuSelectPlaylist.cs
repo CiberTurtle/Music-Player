@@ -4,10 +4,10 @@ namespace MusicPlayer.UI.Menus
 {
 	public class MenuSelectPlaylist : IMenu
 	{
+		public string name => "Play";
+
 		public void Update()
 		{
-			GUI.DrawCustomGUI();
-
 			if (MusicSys.playlists.Length > 1)
 				if (GUI.Button("Random"))
 				{
@@ -24,8 +24,8 @@ namespace MusicPlayer.UI.Menus
 				}
 			}
 
-			if (GUI.Button("Add more playlists..."))
-				Util.OpenFile(Util.ParsePath(Main.settings.musicPath));
+			if (GUI.Button("Add more playlists >"))
+				Util.OpenFile(Settings.current.musicFolder);
 		}
 	}
 }

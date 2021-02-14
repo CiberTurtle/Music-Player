@@ -5,38 +5,39 @@
 ### Quick Setup
 
 1. Add a playlist following the folder layout from #Folder Layout
-2. Run the program using `dotnet run` or `F5` if you're in vscode
-3. Hit `F5` to play a random song
-4. Add a text source to obs
-5. Set the text source to read from a text file from the `Output` folder
-6. **Profit!!!**
+2. Run the program using `dotnet run` or `F5` if you're in vscode (or download it if there's one available)
+3. Click play
+4. Select/Add a playlist
+5. Add a text source to obs
+6. Set the text source to read from a text file from the `Output` folder
+7. **Profit!!!**
 
 ### Folder Layout
 
 ```
 - Music
-  - Playlist
-  - A song that will play.wav
-    - A person who makes music_A song that was made by a person who makes music.wav
-    - @ A song that won't play.wav
-    - @A song that also won't play.wav
-    - A song that can't play.mp3
-  - @ Disabled Playlist
+	- Playlist
+	- A song that will play.wav
+		- A person who makes music_A song that was made by a person who makes music.wav
+		- @ A song that won't play.wav
+		- @A song that also won't play.wav
+		- A song that can't play.mp3
 
 - Output
-  - song_artist.txt
-  - song_name.txt
-  - song_time.txt
+	- song_artist.txt
+	- song_name.txt
+	- song_time.txt
 
-  - settings.json (see #Settings)
-  - settings_schema.json (Ignore this)
+	- settings.json (see #Settings)
+	- settings_schema.json (Ignore this)
 ```
 
 ### Settings
 
 ```jsonc
 {
-	"$schema": "./settings_schema.json", // Ignore this
+	"$schema": "./settings.schema.json", // Ignore this
+	"version": "1.0.0.0", // Ignore this too
 	"startingVolume": 10, // The starting volume in increments
 	"volumeIncrements": 10, // The max volume
 	"tickTime": 1.0, // Time between ticks
@@ -44,14 +45,23 @@
 	"volumeUpKey": "OemPlus",
 	"volumeDownKey": "OemMinus",
 	"pauseKey": "Space",
+	"staticUI": false, // Enable Animations
+	"accentColor": { // Accent Color
+		"r": 1.0,
+		"g": 0.45882353,
+		"b": 0.015686275,
+		"a": 1.0
+	},
 	"musicPath": "/Music", // The relitive to a collection of playlists
 	"outputPath": "/Output", // The relitive to where all the text files will be outputed to
+	"disabledChar": "@", // The prefix character for anything that is disabled
 	"windowTexts": [
 		// The text that will be in the window (see #Parameters) (use "#" to make the line bold)
-		"#{song_artist}: {song_name} from {playlist_name}",
-		"{song_timeplayed_mm:ss.ff} {song_timebar_10} {song_duration_mm:ss.ff}",
-		"{audio_volume} / {audio_volume_max} ('{input_volume_down}' '{input_volume_up}')"
+		"{song_artist}: {song_name} from {playlist_name}",
+		"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff}",
+		"{audio_volume} {audio_volume_bar} {audio_volume_max}"
 	],
+	"windowTitle": "Music Player	[{song_time_mm:ss} / {song_duration_mm:ss}]	{song_artist} {song_name} from {playlist_name}", // The text that will be in the window's titlebar
 	"outputsNewSong": [
 		// Files that will be outputted to after a new song is played
 		{
@@ -100,14 +110,17 @@ Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 ## Plans
 
 - Better code
-  - Better optimisation
-    - Caching
-      - Outputs
-      - Playlists
+	- Better optimisation
+		- Caching
+			- Outputs
+			- Playlists
 - Better parameters
-  - Parameter arguments
-  - Better parsing
+	- Parameter arguments
+	- Better parsing
 - Better Music
-  - Support for `.mp3` files
-  - Music streaming
-  - Music from the web?
+	- Support for `.mp3` files
+	- Music streaming
+	- Music from the web?
+- Better Other
+	- Menu Scrolling
+	- Color serialisation as hex codes

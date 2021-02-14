@@ -7,6 +7,19 @@ namespace MusicPlayer
 {
 	public class MusicSys
 	{
+		static int _volume;
+		public static int volume
+		{
+			get => _volume;
+			set
+			{
+				value = Math.Clamp(value, 0, Settings.current.volumeIncrements);
+
+				_volume = value;
+				SoundEffect.MasterVolume = value * (1.0f / Settings.current.volumeIncrements);
+			}
+		}
+
 		public static string currentSongPath;
 		public static SoundEffect currentSong;
 		public static SoundEffectInstance currentSongInstance;
@@ -19,7 +32,7 @@ namespace MusicPlayer
 			get
 			{
 				if (_playlists == null)
-					_playlists = Directory.GetDirectories(Util.ParsePath(Main.settings.musicPath));
+					_playlists = Directory.GetDirectories(Settings.current.musicFolder);
 				return _playlists;
 			}
 
@@ -32,32 +45,33 @@ namespace MusicPlayer
 
 			if (currentPlaylistPath == null)
 			{
-				Main.LogError("There are no active playlists!");
+				Main.LogError("There is no active playlist!");
 				return;
 			}
 
 			// Choose Song
-			var songs = Directory.GetFiles(currentPlaylistPath, "*.wav", SearchOption.AllDirectories).ToList();
+			var songs = Directory.GetFiles(currentPlaylistPath, "*.wav", SearchOption.AllDirectories)?.ToList();
+			songs?.RemoveAll((x) => x.Contains('@'));
 
 			if (songs?.Count == 0)
 			{
-				Main.LogError($"There are no songs in the {new DirectoryInfo(currentPlaylistPath).Name}!");
+				Main.LogError($"There are no songs in the {new DirectoryInfo(currentPlaylistPath).Name} playlist!");
 				return;
 			}
-
-			songs.RemoveAll((x) => x.Contains('@'));
 
 			if (currentPlaylistPath == null)
 			{
-				Main.LogError($"There are no active songs in {new DirectoryInfo(currentPlaylistPath).Name}!");
+				Main.LogError($"There are no active songs in {new DirectoryInfo(currentPlaylistPath).Name} playlist!");
 				return;
+
 			}
 
+			var prevSong = currentSongPath;
 			currentSongPath = songs[Main.rng.Next(songs.Count)];
 
 			// Don't play the same song again, play it again if there is only one song
 			if (currentSong != null && songs.Count > 1)
-				while (currentSongPath.Contains(currentSong.Name))
+				while (currentSongPath == prevSong)
 					currentSongPath = songs[Main.rng.Next(songs.Count)];
 
 			// Load Song
@@ -90,6 +104,11 @@ namespace MusicPlayer
 			MusicSys.currentSongInstance?.Dispose();
 			MusicSys.currentSongInstance = null;
 			// MusicSys.currentPlaylistPath = string.Empty;
+		}
+
+
+		public static void GetCurrentSoundData()
+		{
 		}
 	}
 }

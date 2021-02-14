@@ -214,12 +214,7 @@ namespace MusicPlayer
 		public static Vector2 operator *(float left, Vector2 right) => new Vector2(right.x * left, right.y * left);
 		public static Vector2 operator /(Vector2 left, float right) => new Vector2(left.x / right, left.y / right);
 
-		public static bool operator ==(Vector2 left, Vector2 right)
-		{
-			float diff_x = left.x - right.x;
-			float diff_y = left.y - right.y;
-			return (diff_x * diff_x + diff_y * diff_y) < epsilon * epsilon;
-		}
+		public static bool operator ==(Vector2 left, Vector2 right) => left.x == right.x && left.y == right.y;
 		public static bool operator !=(Vector2 left, Vector2 right) => !(left == right);
 
 		public static implicit operator bool(Vector2 vector) => vector != Vector2.zero;
