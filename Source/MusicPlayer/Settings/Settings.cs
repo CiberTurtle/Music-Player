@@ -46,7 +46,7 @@ namespace MusicPlayer
 		public string[] windowTexts = new string[]
 		{
 			"{song_artist}: {song_name} from {playlist_name}",
-			"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff}",
+			"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff} {song_state_name}",
 			"{audio_volume} {audio_volume_bar} {audio_volume_max}",
 		};
 

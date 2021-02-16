@@ -6,10 +6,13 @@ namespace MusicPlayer.UI.Menus
 
 		public void Update()
 		{
-			if (GUI.Button("Open Settings..."))
+			if (GUI.Button("Open settings.json..."))
 				Util.OpenFile(Settings.settingsPath);
 
-			if (GUI.Button("Open Output..."))
+			if (GUI.Button("Open Music Folder..."))
+				Util.OpenFile(Settings.current.musicFolder);
+
+			if (GUI.Button("Open Output Folder..."))
 				Util.OpenFile(Settings.current.outputFolder);
 		}
 	}

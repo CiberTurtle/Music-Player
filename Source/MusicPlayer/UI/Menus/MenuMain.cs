@@ -15,6 +15,7 @@ namespace MusicPlayer.UI.Menus
 				if (GUI.Button("Stop"))
 					MusicSys.Stop();
 
+			GUI.Checkbox("Enable Autoplay", ref Main.enableAutoplay);
 			GUI.Checkbox("Enable Output", ref Main.enableOutput);
 
 			if (GUI.Button("Reload"))

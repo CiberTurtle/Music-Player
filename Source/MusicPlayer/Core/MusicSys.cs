@@ -106,9 +106,11 @@ namespace MusicPlayer
 			// MusicSys.currentPlaylistPath = string.Empty;
 		}
 
-
-		public static void GetCurrentSoundData()
+		public static void TogglePause()
 		{
+			if (currentSongInstance == null) return;
+			if (currentSongInstance.State == SoundState.Playing) currentSongInstance.Pause();
+			else currentSongInstance.Play();
 		}
 	}
 }

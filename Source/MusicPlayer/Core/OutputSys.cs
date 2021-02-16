@@ -13,6 +13,8 @@ namespace MusicPlayer
 
 		public static void UpdateOutput(bool isTick, bool forceOutput = false)
 		{
+			Main.current.Window.Title = ParsePerams(Settings.current.windowTitle);
+
 			if (!Main.enableOutput && !forceOutput) return;
 
 			foreach (var output in isTick ? Settings.current.outputsEveryTick : Settings.current.outputsNewSong)
@@ -34,8 +36,6 @@ namespace MusicPlayer
 					}
 				}
 			}
-
-			Main.current.Window.Title = ParsePerams(Settings.current.windowTitle);
 		}
 
 		public static string ParsePerams(string text)

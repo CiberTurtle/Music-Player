@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Microsoft.Xna.Framework.Audio;
 
 namespace MusicPlayer
@@ -41,12 +40,25 @@ namespace MusicPlayer
 						{ "song_time_mm:ss", () => MusicSys.currentSong == null ? "--:--" : Main.timePlayed.ToString(@"mm\:ss") },
 						{ "song_time_mm:ss.ff", () => MusicSys.currentSong == null ? "--:--.--" : Main.timePlayed.ToString(@"mm\:ss\.ff") },
 
-						{ "song_time_bar_10", () =>
-						Util.MakeBar(
-							MusicSys.currentSong == null ?
-							0 :
-							(int)Math.Round(((float)Main.timePlayed.TotalSeconds / (float)MusicSys.currentSong.Duration.TotalSeconds) * 10.0f),
-							10) },
+						{ "song_state_name", () => MusicSys.currentSongInstance == null ? "No Song" : MusicSys.currentSongInstance.State.ToString() },
+						{ "song_state_inverted_icon", () => {
+							if(MusicSys.currentSongInstance == null) return ">>";
+							switch (MusicSys.currentSongInstance.State)
+							{
+								case SoundState.Playing: return "||";
+								case SoundState.Paused: return "> ";
+								case SoundState.Stopped: return ">>";
+							}
+							return ">>";
+						} },
+
+						{
+						"song_time_bar_10", () =>
+					Util.MakeBar(
+						MusicSys.currentSong == null ?
+						0 :
+						(int)Math.Round(((float)Main.timePlayed.TotalSeconds / (float)MusicSys.currentSong.Duration.TotalSeconds) * 10.0f),
+						10) },
 
 						{ "audio_volume", () => MusicSys.volume.ToString() },
 						{ "audio_volume_max", () => Settings.current.volumeIncrements.ToString() },

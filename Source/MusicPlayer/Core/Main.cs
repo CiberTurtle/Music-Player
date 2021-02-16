@@ -33,6 +33,7 @@ namespace MusicPlayer
 
 		public static string root;
 
+		public static bool enableAutoplay = true;
 		public static bool enableOutput = true;
 
 		public static double tickCooldown;
@@ -94,8 +95,6 @@ namespace MusicPlayer
 			ReloadData();
 			OutputSys.UpdateAllOutputs(true);
 
-			// WriteSettings();
-
 			base.OnExiting(sender, args);
 		}
 
@@ -118,14 +117,22 @@ namespace MusicPlayer
 			{
 				if (Input.CheckButtonPress(Settings.current.volumeUpKey)) MusicSys.volume++;
 				if (Input.CheckButtonPress(Settings.current.volumeDownKey)) MusicSys.volume--;
+				if (Input.CheckButtonPress(Settings.current.pauseKey)) MusicSys.TogglePause();
 			}
 
 			if (MusicSys.currentSongInstance != null)
 			{
-				if (MusicSys.currentSongInstance.State != SoundState.Playing)
-					MusicSys.PlayRandomSongFromPlaylist();
-
-				timePlayed += delta;
+				switch (MusicSys.currentSongInstance.State)
+				{
+					case SoundState.Playing:
+						timePlayed += delta;
+						break;
+					case SoundState.Paused:
+						break;
+					case SoundState.Stopped:
+						if (enableAutoplay) MusicSys.PlayRandomSongFromPlaylist();
+						break;
+				}
 			}
 
 			if (tickCooldown < 0)
@@ -171,8 +178,6 @@ namespace MusicPlayer
 				Settings.current.throttleWhenUnfocused ? new TimeSpan((long)(0.1f * TimeSpan.TicksPerSecond)) : TimeSpan.Zero;
 
 			Main.CreateFilesAndFolders();
-
-			// Console.WriteLine(Settings.current.accentColor);
 		}
 
 		public static void CreateFilesAndFolders()

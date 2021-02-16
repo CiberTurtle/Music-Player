@@ -15,11 +15,9 @@ namespace MusicPlayer.UI
 		static Vector2 _hoverOffset = Vector2.zero;
 		public static Vector2 hoverOffset
 		{
-			get => _hoverOffset;
+			get => Settings.current.staticUI ? Vector2.zero : _hoverOffset;
 			set
 			{
-				if (Settings.current.staticUI) return;
-
 				_hoverOffset = value;
 				_hoverOffset.x = Math.Clamp(_hoverOffset.x, 0, hoverOffsetMax.x);
 			}
