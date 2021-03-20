@@ -37,7 +37,7 @@
 ```jsonc
 {
 	"$schema": "./settings.schema.json", // Ignore this
-	"version": "1.0.0.0", // Ignore this too
+	"version": "1.0.2.0", // Ignore this too
 	"startingVolume": 10, // The starting volume in increments
 	"volumeIncrements": 10, // The max volume
 	"tickTime": 1.0, // Time between ticks
@@ -47,18 +47,15 @@
 	"pauseKey": "Space",
 	"staticUI": false, // Enable Animations
 	"accentColor": { // Accent Color
-		"r": 1.0,
-		"g": 0.45882353,
-		"b": 0.015686275,
-		"a": 1.0
+		"hex": "#FF7504FF"
 	},
-	"musicPath": "/Music", // The relitive to a collection of playlists
-	"outputPath": "/Output", // The relitive to where all the text files will be outputed to
+	"musicPath": "/Music", // The path to a collection of playlists
+	"outputPath": "/Output", // The path to where all the text files will be outputed to
 	"disabledChar": "@", // The prefix character for anything that is disabled
 	"windowTexts": [
-		// The text that will be in the window (see #Parameters) (use "#" to make the line bold)
+		// The text that will be in the window (see #Parameters)
 		"{song_artist}: {song_name} from {playlist_name}",
-		"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff}",
+		"{song_time_mm:ss.ff} {song_time_bar_10} {song_duration_mm:ss.ff} {song_state_name}",
 		"{audio_volume} {audio_volume_bar} {audio_volume_max}"
 	],
 	"windowTitle": "Music Player	[{song_time_mm:ss} / {song_duration_mm:ss}]	{song_artist} {song_name} from {playlist_name}", // The text that will be in the window's titlebar
@@ -77,7 +74,7 @@
 		// Files that will be outputted at every tick (see "tickTime")
 		{
 			"path": "/song_time.txt",
-			"text": "{song_timeplayed_mm:ss} / {song_duration_mm:ss}"
+						"text": "{song_time_mm:ss} / {song_duration_mm:ss}"
 		}
 	]
 }
@@ -111,9 +108,6 @@ Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 
 - Better code
 	- Better optimisation
-		- Caching
-			- Outputs
-			- Playlists
 - Better parameters
 	- Parameter arguments
 	- Better parsing
@@ -123,4 +117,3 @@ Format: `{parameter_name}[argument_#1, argument_#2, argument_#3]`
 	- Music from the web?
 - Better Other
 	- Menu Scrolling
-	- Color serialisation as hex codes

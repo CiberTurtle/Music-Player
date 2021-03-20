@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace MusicPlayer
 {
+	[JsonObject(MemberSerialization.OptIn)]
 	public struct Color
 	{
 		#region Static
@@ -85,8 +86,9 @@ namespace MusicPlayer
 		#endregion
 
 		#region Feilds
-		[JsonIgnore] public float grayscale { get => 0.299f * r + 0.587f * g + 0.114f * b; }
-		[JsonIgnore] public float max { get => (float)Math.Max(Math.Max(r, g), b); }
+		public float grayscale { get => 0.299f * r + 0.587f * g + 0.114f * b; }
+		public float max { get => (float)Math.Max(Math.Max(r, g), b); }
+		[JsonProperty] public string hex { get => ToHex(); set => this = Color.FromHex(value); }
 		#endregion
 
 		#region Constructors
@@ -176,16 +178,16 @@ namespace MusicPlayer
 				// Technically isn't a thing but it's nice to have
 				case 1:
 					if (r == g && g == b)
-						return string.Format("#{0:X1}", (int)r * 15);
+						return string.Format("#{0:X1}", (int)(r * 15));
 					break;
 				case 3:
-					return string.Format("#{0:X1}{1:X1}{2:X1}", (int)r * 15, (int)g * 15, (int)b * 15);
+					return string.Format("#{0:X1}{1:X1}{2:X1}", (int)(r * 15), (int)(g * 15), (int)(b * 15));
 				case 4:
-					return string.Format("#{0:X1}{1:X1}{2:X1}{3:X1}", (int)r * 15, (int)g * 15, (int)b * 15, (int)a * 15);
+					return string.Format("#{0:X1}{1:X1}{2:X1}{3:X1}", (int)(r * 15), (int)(g * 15), (int)(b * 15), (int)(a * 15));
 				case 6:
-					return string.Format("#{0:X2}{1:X2}{2:X2}", (int)r * 255, (int)g * 255, (int)b * 255);
+					return string.Format("#{0:X2}{1:X2}{2:X2}", (int)(r * 255), (int)(g * 255), (int)(b * 255));
 				case 8:
-					return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", (int)r * 255, (int)g * 255, (int)b * 255, (int)a * 255);
+					return string.Format("#{0:X2}{1:X2}{2:X2}{3:X2}", (int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
 			}
 
 			Main.LogError($"Color '{this.ToString()}' can not be convered to hex string a length of {length}!");
@@ -239,14 +241,14 @@ namespace MusicPlayer
 		public static bool operator !=(Color left, Color right) => !(left == right);
 
 		public static implicit operator Microsoft.Xna.Framework.Color(Color color) => new Microsoft.Xna.Framework.Color(color.r, color.g, color.b, color.a);
-		public static implicit operator Color(Microsoft.Xna.Framework.Color color) => new Color(color.R, color.G, color.B, color.A);
+		public static implicit operator Color(Microsoft.Xna.Framework.Color color) => new Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
 		public static implicit operator Microsoft.Xna.Framework.Vector3(Color color) => new Microsoft.Xna.Framework.Vector3(color.r, color.g, color.b);
 		public static implicit operator Color(Microsoft.Xna.Framework.Vector3 vector) => new Microsoft.Xna.Framework.Vector3(vector.X, vector.Y, vector.Z);
 		public static implicit operator Microsoft.Xna.Framework.Vector4(Color color) => new Microsoft.Xna.Framework.Vector4(color.r, color.g, color.b, color.a);
 		public static implicit operator Color(Microsoft.Xna.Framework.Vector4 vector) => new Microsoft.Xna.Framework.Vector4(vector.X, vector.Y, vector.Z, vector.W);
 
-		public static implicit operator System.Drawing.Color(Color color) => System.Drawing.Color.FromArgb((int)color.a * 255, (int)color.r * 255, (int)color.g * 255, (int)color.b * 255);
-		public static implicit operator Color(System.Drawing.Color color) => new Color(color.R, color.G, color.B, color.A);
+		public static implicit operator System.Drawing.Color(Color color) => System.Drawing.Color.FromArgb((int)(color.a * 255), (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
+		public static implicit operator Color(System.Drawing.Color color) => new Color((float)color.R / 255, (float)color.G / 255, (float)color.B / 255, (float)color.A / 255);
 		#endregion
 
 		#region Inherited
@@ -255,7 +257,7 @@ namespace MusicPlayer
 		public string ToString(string format)
 		{
 			if (format.StartsWith('#'))
-				return string.Format(format, (int)r * 255, (int)g * 255, (int)b * 255, (int)a * 255);
+				return string.Format(format, (int)(r * 255), (int)(g * 255), (int)(b * 255), (int)(a * 255));
 			return string.Format(format, r, g, b, a);
 		}
 

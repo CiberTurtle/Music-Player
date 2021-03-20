@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework.Audio;
@@ -39,6 +40,8 @@ namespace MusicPlayer
 			set => _playlists = value;
 		}
 
+		public static Queue<string> prevSongs;
+
 		public static void PlayRandomSongFromPlaylist()
 		{
 			Stop();
@@ -63,16 +66,14 @@ namespace MusicPlayer
 			{
 				Main.LogError($"There are no active songs in {new DirectoryInfo(currentPlaylistPath).Name} playlist!");
 				return;
-
 			}
 
-			var prevSong = currentSongPath;
-			currentSongPath = songs[Main.rng.Next(songs.Count)];
+			prevSongs.Enqueue(currentSongPath);
+			if (prevSongs.Count > Math.Min(Settings.current.maxIgnorePrevSongs, songs.Count - 1))
+				prevSongs.Dequeue();
 
-			// Don't play the same song again, play it again if there is only one song
-			if (currentSong != null && songs.Count > 1)
-				while (currentSongPath == prevSong)
-					currentSongPath = songs[Main.rng.Next(songs.Count)];
+			while (prevSongs.Contains(currentSongPath))
+				currentSongPath = songs[Main.rng.Next(songs.Count)];
 
 			// Load Song
 			currentSong = SoundEffect.FromFile(currentSongPath);

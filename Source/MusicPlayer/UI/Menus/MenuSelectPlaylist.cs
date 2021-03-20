@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 
 namespace MusicPlayer.UI.Menus
@@ -12,6 +13,7 @@ namespace MusicPlayer.UI.Menus
 				if (GUI.Button("Random"))
 				{
 					MusicSys.currentPlaylistPath = MusicSys.playlists[Main.rng.Next(MusicSys.playlists.Length)];
+					MusicSys.prevSongs = new Queue<string>();
 					MusicSys.PlayRandomSongFromPlaylist();
 				}
 
@@ -19,7 +21,11 @@ namespace MusicPlayer.UI.Menus
 			{
 				if (GUI.Button(new DirectoryInfo(playlist).Name))
 				{
-					MusicSys.currentPlaylistPath = playlist;
+					if (MusicSys.currentPlaylistPath != playlist)
+					{
+						MusicSys.currentPlaylistPath = playlist;
+						MusicSys.prevSongs = new Queue<string>();
+					}
 					MusicSys.PlayRandomSongFromPlaylist();
 				}
 			}

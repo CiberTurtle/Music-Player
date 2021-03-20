@@ -26,7 +26,7 @@ namespace MusicPlayer
 			get
 			{
 				if (_rng == null)
-					_rng = new Random(DateTime.Now.Ticks.GetHashCode());
+					_rng = new Random(DateTime.Now.Ticks.ToString().GetHashCode() ^ DateTime.Now.Ticks.GetHashCode());
 				return _rng;
 			}
 		}

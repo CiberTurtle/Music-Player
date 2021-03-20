@@ -22,6 +22,8 @@ namespace MusicPlayer
 		[Description("Volume in increments or \"max volume\". [0 - 2147483647]"), Range(0, int.MaxValue)]
 		public int volumeIncrements = 10;
 
+		public int maxIgnorePrevSongs = 5;
+
 		[Description("Time between Ticks. Set to <= 0 to tick every frame.")]
 		public double tickTime = 1.0;
 		public bool throttleWhenUnfocused = true;
